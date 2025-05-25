@@ -1,0 +1,10 @@
+youtube-analysis/
+├── src/
+│   ├── DataCleaner.java
+│   ├── DataAnalyzer.java
+│   ├── ChartGenerator.java
+├── data/
+│   └── USvideos.csv
+├── output/
+│   └── cleaned_data.csv
+├── pom.xml  (for Maven dependencies)
