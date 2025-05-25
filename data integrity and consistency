@@ -1,0 +1,9 @@
+Set<String> uniqueTitles = new HashSet<>();
+List<String[]> cleanedData = new ArrayList<>();
+
+for (String[] row : rows) {
+    if (!uniqueTitles.contains(row[0])) {
+        uniqueTitles.add(row[0]);
+        cleanedData.add(row);
+    }
+}
