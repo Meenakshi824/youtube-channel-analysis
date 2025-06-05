@@ -1,8 +1,0 @@
-Ensuring Data Integrity and Consistency 
-Removing Duplicates and Fixing Errors:
-
-python
-Copy
-Edit
-df.drop_duplicates(inplace=True)
-df['subscribers'] = df['subscribers'].astype(int)
