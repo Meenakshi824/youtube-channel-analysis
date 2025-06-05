@@ -1,0 +1,8 @@
+ Cleaning and Handling Missing Values (4 Marks)
+Handling Missing Data:
+
+python
+Copy code
+df.isnull().sum()
+df.dropna(subset=['subscribers', 'views'], inplace=True)  # Dropping rows with critical missing data
+df['country'].fillna('Unknown', inplace=True)             # Filling missing country info
