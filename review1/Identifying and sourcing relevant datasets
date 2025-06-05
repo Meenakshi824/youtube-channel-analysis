@@ -1,0 +1,14 @@
+. Identifying and Sourcing Relevant Datasets 
+We'll use a dataset from Kaggle or simulated YouTube analytics data.
+
+python
+Copy
+Edit
+import pandas as pd
+
+# Sample YouTube dataset (you can replace with actual data from Kaggle or YouTube API)
+url = 'https://raw.githubusercontent.com/Datamanim/datarepo/main/youtube/train.csv'
+df = pd.read_csv(url)
+
+print("Sample Data:")
+print(df.head())
