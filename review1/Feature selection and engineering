@@ -1,0 +1,10 @@
+ Feature Selection and Engineering (4 Marks)
+Created New Features:
+
+python
+Copy code
+# Engagement rate calculation
+df['engagement_rate'] = (df['likes'] + df['comments']) / df['views']
+
+# Category simplification (example)
+df['category'] = df['category'].str.lower().str.strip()
