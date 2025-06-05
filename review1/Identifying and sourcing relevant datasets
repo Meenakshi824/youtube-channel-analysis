@@ -1,0 +1,13 @@
+1. Identifying and Sourcing Relevant Datasets (4 Marks)
+Dataset Used: top_5000_youtubers.csv (or whichever file you used)
+
+Source: Kaggle / YouTube API / Public datasets
+
+Code Example:
+
+python
+Copy
+Edit
+import pandas as pd
+df = pd.read_csv('top_5000_youtubers.csv')
+df.head()
