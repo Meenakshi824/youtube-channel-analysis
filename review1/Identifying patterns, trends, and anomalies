@@ -1,0 +1,15 @@
+ Identifying Patterns, Trends, and Anomalies 
+Trends:
+
+python
+Copy
+Edit
+df.groupby('category')['subscribers'].mean().sort_values(ascending=False).plot(kind='bar')
+Pattern/Anomaly Detection:
+
+python
+Copy
+Edit
+# Detect channels with unusually high views but low subscribers
+anomalies = df[(df['views'] > 1e9) & (df['subscribers'] < 100000)]
+Explanation: Identified that "Music" and "Entertainment" channels dominate in subscribers. Found anomalies with viral videos and low subscriber counts.
