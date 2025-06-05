@@ -1,0 +1,15 @@
+ Feature Selection and Engineering
+python
+Copy
+Edit
+# Creating new features
+df['likes_per_view'] = df['likes'] / df['views']
+df['comments_per_view'] = df['comment_count'] / df['views']
+df['engagement_score'] = df['likes'] + df['dislikes'] + df['comment_count']
+
+# Extracting publish hour
+df['publishedAt'] = pd.to_datetime(df['publishedAt'])
+df['publish_hour'] = df['publishedAt'].dt.hour
+
+selected_features = ['views', 'likes', 'dislikes', 'comment_count', 'likes_per_view', 'comments_per_view', 'engagement_score', 'publish_hour']
+print(df[selected_features].head())
