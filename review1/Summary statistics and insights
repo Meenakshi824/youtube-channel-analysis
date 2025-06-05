@@ -1,0 +1,10 @@
+ Summary Statistics and Insights 
+python
+Copy
+Edit
+summary = df[selected_features].describe()
+print("Summary Statistics:")
+print(summary)
+
+# Example insight
+print("Average engagement score:", df['engagement_score'].mean())
