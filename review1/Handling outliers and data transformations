@@ -1,0 +1,13 @@
+Handling Outliers and Data Transformations
+python
+Copy
+Edit
+# Remove extreme outliers
+df = df[df['z_engagement'].abs() <= 3]
+
+# Log-transform views for normalization
+import numpy as np
+df['log_views'] = np.log1p(df['views'])
+
+print("Transformed views sample:")
+print(df[['views', 'log_views']].head())
