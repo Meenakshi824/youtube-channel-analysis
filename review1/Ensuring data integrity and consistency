@@ -1,0 +1,13 @@
+ Ensuring Data Integrity and Consistency
+python
+Copy
+Edit
+# Remove rows with negative or logically invalid values
+df = df[df['views'] >= 0]
+df = df[df['likes'] >= 0]
+df = df[df['dislikes'] >= 0]
+
+# Ensuring consistent data types
+df[selected_features] = df[selected_features].astype(float)
+print("Data types verified:")
+print(df[selected_features].dtypes)
