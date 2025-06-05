@@ -1,0 +1,15 @@
+ Identifying Patterns, Trends, and Anomalies 
+python
+Copy
+Edit
+# Correlation matrix
+correlation = df[selected_features].corr()
+print("Correlation matrix:")
+print(correlation)
+
+# Detect anomalies using Z-score
+from scipy.stats import zscore
+df['z_engagement'] = zscore(df['engagement_score'])
+anomalies = df[df['z_engagement'].abs() > 3]
+print("Anomalies in engagement:")
+print(anomalies[['title', 'engagement_score', 'z_engagement']])
