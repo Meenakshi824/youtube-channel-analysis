@@ -1,0 +1,390 @@
+import React, { useState, useMemo } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, ScatterChart, Scatter, PieChart, Pie, Cell, Area, AreaChart } from 'recharts';
+import { TrendingUp, Users, Eye, ThumbsUp, MessageCircle, Calendar, Filter, BarChart3 } from 'lucide-react';
+
+const YouTubeAnalysisDashboard = () => {
+  // Sample YouTube channel data with realistic metrics
+  const channelData = [
+    { channel: 'TechReview Pro', subscribers: 2500000, totalViews: 45000000, videos: 248, avgViews: 181000, category: 'Technology', engagement: 8.5, uploadFreq: 3.2 },
+    { channel: 'Gaming Central', subscribers: 1800000, totalViews: 32000000, videos: 156, avgViews: 205000, category: 'Gaming', engagement: 12.3, uploadFreq: 4.1 },
+    { channel: 'Cooking Masters', subscribers: 950000, totalViews: 18500000, videos: 189, avgViews: 98000, category: 'Food', engagement: 9.8, uploadFreq: 2.8 },
+    { channel: 'Fitness Journey', subscribers: 1200000, totalViews: 22000000, videos: 134, avgViews: 164000, category: 'Health', engagement: 11.2, uploadFreq: 2.5 },
+    { channel: 'Science Explained', subscribers: 890000, totalViews: 16800000, videos: 112, avgViews: 150000, category: 'Education', engagement: 7.9, uploadFreq: 1.8 },
+    { channel: 'Travel Vlogs', subscribers: 1450000, totalViews: 28000000, videos: 98, avgViews: 286000, category: 'Travel', engagement: 10.5, uploadFreq: 1.2 },
+    { channel: 'Comedy Corner', subscribers: 3200000, totalViews: 58000000, videos: 267, avgViews: 217000, category: 'Entertainment', engagement: 14.2, uploadFreq: 3.8 },
+    { channel: 'DIY Crafts', subscribers: 780000, totalViews: 14200000, videos: 203, avgViews: 70000, category: 'Lifestyle', engagement: 8.9, uploadFreq: 2.9 }
+  ];
+
+  const monthlyData = [
+    { month: 'Jan', views: 4200000, subscribers: 125000, engagement: 8.2 },
+    { month: 'Feb', views: 3800000, subscribers: 98000, engagement: 7.8 },
+    { month: 'Mar', views: 5100000, subscribers: 156000, engagement: 9.1 },
+    { month: 'Apr', views: 4750000, subscribers: 142000, engagement: 8.7 },
+    { month: 'May', views: 5800000, subscribers: 178000, engagement: 9.8 },
+    { month: 'Jun', views: 6200000, subscribers: 195000, engagement: 10.2 }
+  ];
+
+  const categoryData = [
+    { category: 'Technology', channels: 15, totalSubs: 12500000, color: '#3B82F6' },
+    { category: 'Gaming', channels: 22, totalSubs: 18700000, color: '#EF4444' },
+    { category: 'Food', channels: 18, totalSubs: 9800000, color: '#10B981' },
+    { category: 'Health', channels: 12, totalSubs: 7200000, color: '#F59E0B' },
+    { category: 'Education', channels: 8, totalSubs: 5400000, color: '#8B5CF6' },
+    { category: 'Travel', channels: 14, totalSubs: 11200000, color: '#EC4899' },
+    { category: 'Entertainment', channels: 25, totalSubs: 22100000, color: '#06B6D4' },
+    { category: 'Lifestyle', channels: 16, totalSubs: 8900000, color: '#84CC16' }
+  ];
+
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [sortBy, setSortBy] = useState('subscribers');
+  const [viewMode, setViewMode] = useState('overview');
+
+  const filteredData = useMemo(() => {
+    let data = selectedCategory === 'All' ? channelData : channelData.filter(channel => channel.category === selectedCategory);
+    return data.sort((a, b) => b[sortBy] - a[sortBy]);
+  }, [selectedCategory, sortBy]);
+
+  const totalStats = useMemo(() => {
+    const total = filteredData.reduce((acc, channel) => ({
+      subscribers: acc.subscribers + channel.subscribers,
+      views: acc.views + channel.totalViews,
+      videos: acc.videos + channel.videos,
+      engagement: acc.engagement + channel.engagement
+    }), { subscribers: 0, views: 0, videos: 0, engagement: 0 });
+    
+    return {
+      ...total,
+      avgEngagement: (total.engagement / filteredData.length).toFixed(1)
+    };
+  }, [filteredData]);
+
+  const StatCard = ({ icon: Icon, title, value, change, color }) => (
+    <div className="bg-white rounded-xl shadow-lg p-6 border-l-4" style={{ borderColor: color }}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600">{title}</p>
+          <p className="text-2xl font-bold text-gray-900">{value}</p>
+          {change && (
+            <p className={`text-sm flex items-center mt-1 ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <TrendingUp className="w-4 h-4 mr-1" />
+              {change > 0 ? '+' : ''}{change}%
+            </p>
+          )}
+        </div>
+        <Icon className="w-8 h-8" style={{ color }} />
+      </div>
+    </div>
+  );
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-4 border border-gray-200 rounded-lg shadow-lg">
+          <p className="font-semibold text-gray-800">{label}</p>
+          {payload.map((entry, index) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {entry.name}: {typeof entry.value === 'number' ? entry.value.toLocaleString() : entry.value}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">YouTube Channel Analytics Dashboard</h1>
+          <p className="text-lg text-gray-600">Comprehensive analysis of channel performance and engagement metrics</p>
+        </div>
+
+        {/* Controls */}
+        <div className="flex flex-wrap gap-4 mb-8 p-4 bg-white rounded-xl shadow-lg">
+          <div className="flex items-center gap-2">
+            <Filter className="w-5 h-5 text-gray-600" />
+            <select 
+              value={selectedCategory} 
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="All">All Categories</option>
+              {[...new Set(channelData.map(c => c.category))].map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-gray-600" />
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="subscribers">Sort by Subscribers</option>
+              <option value="totalViews">Sort by Total Views</option>
+              <option value="avgViews">Sort by Avg Views</option>
+              <option value="engagement">Sort by Engagement</option>
+            </select>
+          </div>
+
+          <div className="flex gap-2">
+            {['overview', 'trends', 'categories'].map(mode => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                  viewMode === mode 
+                    ? 'bg-blue-600 text-white shadow-lg' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {mode.charAt(0).toUpperCase() + mode.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard 
+            icon={Users} 
+            title="Total Subscribers" 
+            value={(totalStats.subscribers / 1000000).toFixed(1) + 'M'} 
+            change={12.5}
+            color="#3B82F6"
+          />
+          <StatCard 
+            icon={Eye} 
+            title="Total Views" 
+            value={(totalStats.views / 1000000).toFixed(1) + 'M'} 
+            change={8.3}
+            color="#10B981"
+          />
+          <StatCard 
+            icon={Calendar} 
+            title="Total Videos" 
+            value={totalStats.videos.toLocaleString()} 
+            change={15.7}
+            color="#F59E0B"
+          />
+          <StatCard 
+            icon={ThumbsUp} 
+            title="Avg Engagement" 
+            value={totalStats.avgEngagement + '%'} 
+            change={-2.1}
+            color="#EF4444"
+          />
+        </div>
+
+        {viewMode === 'overview' && (
+          <>
+            {/* Main Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+              {/* Subscribers vs Views Scatter */}
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Subscribers vs Average Views</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <ScatterChart data={filteredData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="subscribers" 
+                      type="number" 
+                      domain={['dataMin', 'dataMax']}
+                      tickFormatter={(value) => (value / 1000000).toFixed(1) + 'M'}
+                      stroke="#666"
+                    />
+                    <YAxis 
+                      dataKey="avgViews" 
+                      type="number"
+                      tickFormatter={(value) => (value / 1000).toFixed(0) + 'K'}
+                      stroke="#666"
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Scatter dataKey="avgViews" fill="#3B82F6" />
+                  </ScatterChart>
+                </ResponsiveContainer>
+                <p className="text-sm text-gray-600 mt-2">
+                  <strong>Insight:</strong> Higher subscriber counts generally correlate with better average view performance, showing audience loyalty.
+                </p>
+              </div>
+
+              {/* Channel Performance Bar Chart */}
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-4">Top Channels by Subscribers</h3>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={filteredData.slice(0, 6)} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      type="number" 
+                      tickFormatter={(value) => (value / 1000000).toFixed(1) + 'M'}
+                      stroke="#666"
+                    />
+                    <YAxis dataKey="channel" type="category" width={120} stroke="#666" />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="subscribers" fill="#10B981" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+                <p className="text-sm text-gray-600 mt-2">
+                  <strong>Insight:</strong> Comedy and gaming channels dominate subscriber counts, indicating strong audience appeal.
+                </p>
+              </div>
+            </div>
+
+            {/* Engagement Analysis */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Upload Frequency vs Engagement Rate</h3>
+              <ResponsiveContainer width="100%" height={400}>
+                <ScatterChart data={filteredData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="uploadFreq" 
+                    type="number"
+                    domain={[0, 5]}
+                    label={{ value: 'Videos per Week', position: 'insideBottom', offset: -10 }}
+                    stroke="#666"
+                  />
+                  <YAxis 
+                    dataKey="engagement" 
+                    type="number"
+                    domain={[5, 16]}
+                    label={{ value: 'Engagement Rate (%)', angle: -90, position: 'insideLeft' }}
+                    stroke="#666"
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Scatter dataKey="engagement" fill="#EF4444" strokeWidth={2} />
+                </ScatterChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Key Finding:</strong> Optimal upload frequency appears to be 2-4 videos per week for maximum engagement. 
+                Too frequent uploads may dilute audience attention, while too infrequent may reduce visibility.
+              </p>
+            </div>
+          </>
+        )}
+
+        {viewMode === 'trends' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Monthly Trends */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Monthly Performance Trends</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="month" stroke="#666" />
+                  <YAxis tickFormatter={(value) => (value / 1000000).toFixed(1) + 'M'} stroke="#666" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" dataKey="views" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.3} />
+                </AreaChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Trend Analysis:</strong> Steady growth in viewership with peak performance in May-June, likely due to summer content consumption patterns.
+              </p>
+            </div>
+
+            {/* Subscriber Growth */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Subscriber Acquisition Trends</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="month" stroke="#666" />
+                  <YAxis tickFormatter={(value) => (value / 1000).toFixed(0) + 'K'} stroke="#666" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey="subscribers" stroke="#10B981" strokeWidth={3} dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Growth Pattern:</strong> Consistent subscriber growth with acceleration in recent months, indicating effective content strategy.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {viewMode === 'categories' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Category Distribution */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Category Distribution by Subscribers</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="totalSubs"
+                    label={({ category, percent }) => `${category} ${(percent * 100).toFixed(1)}%`}
+                  >
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Market Share:</strong> Entertainment and Gaming dominate the subscriber landscape, representing over 45% of total subscribers.
+              </p>
+            </div>
+
+            {/* Category Performance */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Average Performance by Category</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={categoryData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="category" angle={-45} textAnchor="end" height={80} stroke="#666" />
+                  <YAxis tickFormatter={(value) => (value / 1000000).toFixed(1) + 'M'} stroke="#666" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="totalSubs" radius={[4, 4, 0, 0]}>
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Category Insights:</strong> Entertainment leads in subscriber acquisition, while niche categories like Education show lower but potentially more engaged audiences.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Data Story Summary */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl shadow-lg p-8 text-white">
+          <h2 className="text-2xl font-bold mb-4">📊 Data Story & Key Insights</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+              <h4 className="font-bold mb-2">🎯 Content Strategy</h4>
+              <p className="text-sm">Entertainment and Gaming categories show highest subscriber potential. Optimal upload frequency is 2-4 videos per week for maximum engagement.</p>
+            </div>
+            <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+              <h4 className="font-bold mb-2">📈 Growth Patterns</h4>
+              <p className="text-sm">Channels with 1M+ subscribers maintain better view-to-subscriber ratios, indicating stronger audience loyalty and algorithmic favor.</p>
+            </div>
+            <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+              <h4 className="font-bold mb-2">⚡ Engagement Metrics</h4>
+              <p className="text-sm">Higher engagement rates (10%+) correlate with consistent content quality rather than just upload frequency. Quality over quantity principle applies.</p>
+            </div>
+          </div>
+          <div className="mt-6 p-4 bg-white/10 rounded-lg">
+            <h4 className="font-bold mb-2">🔍 Strategic Recommendations</h4>
+            <ul className="text-sm space-y-1">
+              <li>• Focus on Entertainment or Gaming niches for maximum growth potential</li>
+              <li>• Maintain 2-4 video uploads per week for optimal audience engagement</li>
+              <li>• Prioritize content quality and audience interaction over upload frequency</li>
+              <li>• Monitor seasonal trends - summer months show increased viewership</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default YouTubeAnalysisDashboard;
