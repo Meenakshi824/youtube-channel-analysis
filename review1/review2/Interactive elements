@@ -1,0 +1,121 @@
+
+            {/* Engagement Analysis */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Upload Frequency vs Engagement Rate</h3>
+              <ResponsiveContainer width="100%" height={400}>
+                <ScatterChart data={filteredData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis 
+                    dataKey="uploadFreq" 
+                    type="number"
+                    domain={[0, 5]}
+                    label={{ value: 'Videos per Week', position: 'insideBottom', offset: -10 }}
+                    stroke="#666"
+                  />
+                  <YAxis 
+                    dataKey="engagement" 
+                    type="number"
+                    domain={[5, 16]}
+                    label={{ value: 'Engagement Rate (%)', angle: -90, position: 'insideLeft' }}
+                    stroke="#666"
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Scatter dataKey="engagement" fill="#EF4444" strokeWidth={2} />
+                </ScatterChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Key Finding:</strong> Optimal upload frequency appears to be 2-4 videos per week for maximum engagement. 
+                Too frequent uploads may dilute audience attention, while too infrequent may reduce visibility.
+              </p>
+            </div>
+          </>
+        )}
+
+        {viewMode === 'trends' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Monthly Trends */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Monthly Performance Trends</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="month" stroke="#666" />
+                  <YAxis tickFormatter={(value) => (value / 1000000).toFixed(1) + 'M'} stroke="#666" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Area type="monotone" dataKey="views" stackId="1" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.3} />
+                </AreaChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Trend Analysis:</strong> Steady growth in viewership with peak performance in May-June, likely due to summer content consumption patterns.
+              </p>
+            </div>
+
+            {/* Subscriber Growth */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Subscriber Acquisition Trends</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={monthlyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="month" stroke="#666" />
+                  <YAxis tickFormatter={(value) => (value / 1000).toFixed(0) + 'K'} stroke="#666" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey="subscribers" stroke="#10B981" strokeWidth={3} dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Growth Pattern:</strong> Consistent subscriber growth with acceleration in recent months, indicating effective content strategy.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {viewMode === 'categories' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Category Distribution */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Category Distribution by Subscribers</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="totalSubs"
+                    label={({ category, percent }) => `${category} ${(percent * 100).toFixed(1)}%`}
+                  >
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Market Share:</strong> Entertainment and Gaming dominate the subscriber landscape, representing over 45% of total subscribers.
+              </p>
+            </div>
+
+            {/* Category Performance */}
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Average Performance by Category</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={categoryData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="category" angle={-45} textAnchor="end" height={80} stroke="#666" />
+                  <YAxis tickFormatter={(value) => (value / 1000000).toFixed(1) + 'M'} stroke="#666" />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="totalSubs" radius={[4, 4, 0, 0]}>
+                    {categoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              <p className="text-sm text-gray-600 mt-2">
+                <strong>Category Insights:</strong> Entertainment leads in subscriber acquisition, while niche categories like Education show lower but potentially more engaged audiences.
+              </p>
+            </div>
+          </div>
+        )}
