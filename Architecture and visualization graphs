@@ -1,0 +1,291 @@
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.patches import FancyBboxPatch, Circle, ConnectionPatch
+import numpy as np
+
+# Create figure and axis
+fig, ax = plt.subplots(1, 1, figsize=(16, 10))
+ax.set_xlim(0, 1200)
+ax.set_ylim(0, 800)
+ax.set_aspect('equal')
+
+# Remove axes
+ax.axis('off')
+
+# Set background color
+fig.patch.set_facecolor('#f8f9fa')
+
+# Title
+ax.text(600, 770, 'YouTube Channel Analysis - Power BI Architecture', 
+        fontsize=20, fontweight='bold', ha='center', color='#2c3e50')
+
+# Color palette
+colors = {
+    'data_sources': '#e8f4fd',
+    'data_processing': '#fff3cd', 
+    'data_model': '#d1ecf1',
+    'dashboard': '#f8f9fa',
+    'kpi_green': '#28a745',
+    'kpi_red': '#dc3545',
+    'kpi_blue': '#007bff',
+    'kpi_purple': '#6f42c1',
+    'chart_blue': '#3498db',
+    'chart_red': '#e74c3c',
+    'chart_orange': '#f39c12'
+}
+
+# Helper function to create rounded rectangles
+def create_rounded_rect(x, y, width, height, facecolor, edgecolor, linewidth=1):
+    return FancyBboxPatch((x, y), width, height,
+                         boxstyle="round,pad=5",
+                         facecolor=facecolor,
+                         edgecolor=edgecolor,
+                         linewidth=linewidth)
+
+# Data Sources Section
+data_sources_rect = create_rounded_rect(50, 540, 300, 180, colors['data_sources'], '#3498db', 2)
+ax.add_patch(data_sources_rect)
+ax.text(200, 700, 'Data Sources', fontsize=14, fontweight='bold', ha='center', color='#2c3e50')
+
+# CSV Files box
+csv_rect = create_rounded_rect(70, 620, 120, 40, 'white', '#3498db')
+ax.add_patch(csv_rect)
+ax.text(130, 645, 'CSV Files', fontsize=10, ha='center', color='#2c3e50')
+ax.text(130, 630, '(review1/)', fontsize=8, ha='center', color='#7f8c8d')
+
+# YouTube API box
+api_rect = create_rounded_rect(210, 620, 120, 40, 'white', '#3498db')
+ax.add_patch(api_rect)
+ax.text(270, 645, 'YouTube API', fontsize=10, ha='center', color='#2c3e50')
+ax.text(270, 630, '(Future)', fontsize=8, ha='center', color='#7f8c8d')
+
+# Data fields
+fields_left = ['• video_id', '• title', '• views']
+fields_center = ['• likes', '• comments', '• publish_date']
+fields_right = ['• duration', '• tags', '• category']
+
+for i, field in enumerate(fields_left):
+    ax.text(70, 595 - i*15, field, fontsize=9, color='#2c3e50')
+for i, field in enumerate(fields_center):
+    ax.text(170, 595 - i*15, field, fontsize=9, color='#2c3e50')
+for i, field in enumerate(fields_right):
+    ax.text(270, 595 - i*15, field, fontsize=9, color='#2c3e50')
+
+# Data Processing Section
+processing_rect = create_rounded_rect(450, 540, 300, 180, colors['data_processing'], '#ffc107', 2)
+ax.add_patch(processing_rect)
+ax.text(600, 700, 'Data Processing', fontsize=14, fontweight='bold', ha='center', color='#2c3e50')
+
+# Power Query box
+query_rect = create_rounded_rect(470, 620, 260, 40, 'white', '#ffc107')
+ax.add_patch(query_rect)
+ax.text(600, 640, 'Power Query Editor', fontsize=10, ha='center', color='#2c3e50')
+
+# Processing steps
+processing_steps = ['• Data Cleaning & Transformation', '• Date Formatting', 
+                   '• Calculated Columns', '• Data Type Validation']
+for i, step in enumerate(processing_steps):
+    ax.text(470, 595 - i*15, step, fontsize=9, color='#2c3e50')
+
+# Data Model Section
+model_rect = create_rounded_rect(850, 540, 300, 180, colors['data_model'], '#17a2b8', 2)
+ax.add_patch(model_rect)
+ax.text(1000, 700, 'Data Model', fontsize=14, fontweight='bold', ha='center', color='#2c3e50')
+
+# Data model tables
+videos_rect = create_rounded_rect(870, 620, 100, 60, 'white', '#17a2b8')
+ax.add_patch(videos_rect)
+ax.text(920, 660, 'Videos', fontsize=10, fontweight='bold', ha='center', color='#2c3e50')
+ax.text(920, 640, 'Fact Table', fontsize=8, ha='center', color='#7f8c8d')
+
+date_rect = create_rounded_rect(1050, 620, 100, 60, 'white', '#17a2b8')
+ax.add_patch(date_rect)
+ax.text(1100, 660, 'Date', fontsize=10, fontweight='bold', ha='center', color='#2c3e50')
+ax.text(1100, 640, 'Dimension', fontsize=8, ha='center', color='#7f8c8d')
+
+categories_rect = create_rounded_rect(870, 560, 100, 50, 'white', '#17a2b8')
+ax.add_patch(categories_rect)
+ax.text(920, 585, 'Categories', fontsize=10, fontweight='bold', ha='center', color='#2c3e50')
+
+metrics_rect = create_rounded_rect(1050, 560, 100, 50, 'white', '#17a2b8')
+ax.add_patch(metrics_rect)
+ax.text(1100, 585, 'Metrics', fontsize=10, fontweight='bold', ha='center', color='#2c3e50')
+
+# Arrows between sections
+arrow1 = patches.FancyArrowPatch((350, 630), (450, 630),
+                                connectionstyle="arc3", 
+                                arrowstyle='->', 
+                                mutation_scale=20, 
+                                color='#2c3e50',
+                                linewidth=2)
+ax.add_patch(arrow1)
+
+arrow2 = patches.FancyArrowPatch((750, 630), (850, 630),
+                                connectionstyle="arc3", 
+                                arrowstyle='->', 
+                                mutation_scale=20, 
+                                color='#2c3e50',
+                                linewidth=2)
+ax.add_patch(arrow2)
+
+# Dashboard Section
+dashboard_rect = create_rounded_rect(50, 50, 1100, 450, colors['dashboard'], '#6c757d', 2)
+ax.add_patch(dashboard_rect)
+ax.text(600, 475, 'Power BI Dashboard Layout', fontsize=16, fontweight='bold', ha='center', color='#2c3e50')
+
+# KPI Cards
+kpi_cards = [
+    {'x': 80, 'color': colors['kpi_green'], 'title': 'Total Views', 'value': '2.5M'},
+    {'x': 250, 'color': colors['kpi_red'], 'title': 'Total Likes', 'value': '125K'},
+    {'x': 420, 'color': colors['kpi_blue'], 'title': 'Avg Engagement', 'value': '8.2%'},
+    {'x': 590, 'color': colors['kpi_purple'], 'title': 'Total Videos', 'value': '248'}
+]
+
+for kpi in kpi_cards:
+    kpi_rect = patches.Rectangle((kpi['x'], 400), 150, 80, 
+                                facecolor=kpi['color'], 
+                                edgecolor=kpi['color'])
+    ax.add_patch(kpi_rect)
+    ax.text(kpi['x'] + 75, 455, kpi['title'], fontsize=10, fontweight='bold', 
+            ha='center', color='white')
+    ax.text(kpi['x'] + 75, 425, kpi['value'], fontsize=16, fontweight='bold', 
+            ha='center', color='white')
+
+# Top Videos Chart
+chart1_rect = patches.Rectangle((80, 250), 350, 130, facecolor='white', 
+                               edgecolor='#dee2e6', linewidth=1)
+ax.add_patch(chart1_rect)
+ax.text(255, 365, 'Top 10 Videos by Views', fontsize=12, fontweight='bold', 
+        ha='center', color='#2c3e50')
+
+# Bar chart simulation
+bar_heights = [100, 80, 65, 55, 45, 35]
+bar_positions = [110, 160, 210, 260, 310, 360]
+for i, (pos, height) in enumerate(zip(bar_positions, bar_heights)):
+    bar_rect = patches.Rectangle((pos, 260), 30, height, 
+                                facecolor=colors['chart_blue'])
+    ax.add_patch(bar_rect)
+
+# Views vs Likes Scatter Plot
+chart2_rect = patches.Rectangle((450, 250), 350, 130, facecolor='white', 
+                               edgecolor='#dee2e6', linewidth=1)
+ax.add_patch(chart2_rect)
+ax.text(625, 365, 'Views vs Likes Correlation', fontsize=12, fontweight='bold', 
+        ha='center', color='#2c3e50')
+
+# Scatter plot simulation
+scatter_x = [500, 550, 600, 650, 700, 750]
+scatter_y = [320, 300, 330, 310, 340, 320]
+for x, y in zip(scatter_x, scatter_y):
+    circle = Circle((x, y), 3, facecolor=colors['chart_red'])
+    ax.add_patch(circle)
+
+# Time Series Chart
+chart3_rect = patches.Rectangle((820, 250), 300, 130, facecolor='white', 
+                               edgecolor='#dee2e6', linewidth=1)
+ax.add_patch(chart3_rect)
+ax.text(970, 365, 'Upload Frequency Over Time', fontsize=12, fontweight='bold', 
+        ha='center', color='#2c3e50')
+
+# Line chart simulation
+line_x = np.linspace(840, 1100, 15)
+line_y = [300, 310, 290, 320, 300, 330, 310, 340, 320, 350, 330, 360, 340, 370, 350]
+ax.plot(line_x, line_y, color=colors['chart_orange'], linewidth=3)
+
+# Category Performance
+chart4_rect = patches.Rectangle((80, 180), 300, 60, facecolor='white', 
+                               edgecolor='#dee2e6', linewidth=1)
+ax.add_patch(chart4_rect)
+ax.text(230, 225, 'Performance by Category', fontsize=12, fontweight='bold', 
+        ha='center', color='#2c3e50')
+
+# Donut chart simulation
+donut = Circle((150, 200), 15, facecolor='none', edgecolor=colors['chart_blue'], linewidth=6)
+ax.add_patch(donut)
+
+# Engagement Metrics
+chart5_rect = patches.Rectangle((400, 180), 300, 60, facecolor='white', 
+                               edgecolor='#dee2e6', linewidth=1)
+ax.add_patch(chart5_rect)
+ax.text(550, 225, 'Engagement Rate Trend', fontsize=12, fontweight='bold', 
+        ha='center', color='#2c3e50')
+
+# Filters Panel
+filters_rect = patches.Rectangle((720, 180), 200, 60, facecolor='#e9ecef', 
+                                edgecolor='#6c757d', linewidth=1)
+ax.add_patch(filters_rect)
+ax.text(820, 225, 'Filters', fontsize=10, fontweight='bold', ha='center', color='#2c3e50')
+ax.text(730, 205, '• Date Range', fontsize=8, color='#2c3e50')
+ax.text(730, 190, '• Category', fontsize=8, color='#2c3e50')
+
+# ML Insights Panel
+ml_rect = patches.Rectangle((940, 180), 180, 60, facecolor='#d4edda', 
+                           edgecolor='#28a745', linewidth=1)
+ax.add_patch(ml_rect)
+ax.text(1030, 225, 'AI Insights', fontsize=10, fontweight='bold', ha='center', color='#2c3e50')
+ax.text(950, 205, '• Predicted Views', fontsize=8, color='#2c3e50')
+ax.text(950, 190, '• Optimal Upload Time', fontsize=8, color='#2c3e50')
+
+# Technology Stack
+ax.text(600, 20, 'Technology Stack: Power BI Desktop | Power Query | DAX | Python (Optional) | Power BI Service', 
+        fontsize=10, fontweight='bold', ha='center', color='#2c3e50')
+
+# Adjust layout and display
+plt.tight_layout()
+plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+
+# Save the figure
+plt.savefig('youtube_powerbi_architecture.png', dpi=300, bbox_inches='tight', 
+            facecolor='#f8f9fa', edgecolor='none')
+
+# Display the plot
+plt.show()
+
+print("YouTube Power BI Architecture diagram generated successfully!")
+print("Saved as 'youtube_powerbi_architecture.png'")
+
+# Optional: Create an interactive version using plotly
+def create_interactive_diagram():
+    """
+    Creates an interactive version of the diagram using Plotly
+    """
+    try:
+        import plotly.graph_objects as go
+        from plotly.subplots import make_subplots
+        
+        fig = go.Figure()
+        
+        # Add shapes for main sections
+        fig.add_shape(
+            type="rect",
+            x0=50, y0=540, x1=350, y1=720,
+            fillcolor="rgba(232, 244, 253, 0.8)",
+            line=dict(color="#3498db", width=2),
+        )
+        
+        fig.add_annotation(
+            x=200, y=700,
+            text="Data Sources",
+            showarrow=False,
+            font=dict(size=16, color="#2c3e50"),
+        )
+        
+        # Add more shapes and annotations for complete diagram...
+        # (This would be a much longer implementation for the full diagram)
+        
+        fig.update_layout(
+            title="Interactive YouTube Power BI Architecture",
+            xaxis=dict(range=[0, 1200], showgrid=False, showticklabels=False),
+            yaxis=dict(range=[0, 800], showgrid=False, showticklabels=False),
+            plot_bgcolor="#f8f9fa",
+            width=1200,
+            height=800
+        )
+        
+        fig.show()
+        
+    except ImportError:
+        print("Plotly not available. Install with: pip install plotly")
+
+# Uncomment to create interactive version
+# create_interactive_diagram()
